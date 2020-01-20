@@ -1,20 +1,19 @@
 
-#Configure a default setup of Home Assistant (frontend, api, etc)
+# Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-http:
-  base_url: hass2.duckdns.org:8123
-  ssl_certificate: ./ssl/fullchain.pem
-  ssl_key: ./ssl/privkey.pem
+#http:
+#  base_url: hass2.duckdns.org:8123
+#  ssl_certificate: ~/ssl/fullchain.pem
+#  ssl_key: ~/ssl/privkey.pem
 
 # Text to speech
 tts:
   - platform: google_translate
 
 automation: !include automations.yaml
-#script: !include scripts.yaml
-  
+
 sensor:
   - platform: serial
     serial_port: /dev/ttyUSB0
@@ -29,4 +28,3 @@ sensor:
         friendly_name: Humidity
         unit_of_measurement: "%"
         value_template: "{{ states('sensor.serial_sensor').split(',')[1] | float}}"
-

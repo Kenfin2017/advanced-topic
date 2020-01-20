@@ -27,7 +27,7 @@ OneWire  ds(10);  // on pin 10 (a 4.7K resistor is necessary)
 #define analogPin      0          // analog pin for measuring capacitor voltage
 #define chargePin      13         // pin to charge the capacitor - connected to one end of the charging resistor
 #define dischargePin   11         // pin to discharge the capacitor
-#define resistorValue  1000000.0F   // 1M change this to whatever resistor value you are using
+#define resistorValue  1000000.0F   // 1M Ohm change this to whatever resistor value you are using
                                   // F formatter tells compiler it's a floating point value
 unsigned long startTime;
 unsigned long elapsedTime;

@@ -1,61 +1,76 @@
-- id: '1572854591783'
-  alias: Turn on light at sun set
+- id: '1579508807051'
+  alias: Keep lights on while the sun is below horizon
   description: ''
   trigger:
-  - event: sunset
-    offset: -00:10:00
-    platform: sun
-  condition: []
+  - entity_id: sun.sun
+    for: 00:00:05
+    from: above_horizon
+    platform: state
+    to: below_horizon
+  condition:
+  - condition: state
+    entity_id: light.tradfri_bulb
+    state: 'off'
   action:
-  - data:
-      brightness: 255
-      entity_id: light.tradfri_bulb
-    service: light.turn_on
-- id: '1572857301156'
-  alias: Turn on Light when motions detected
+  - device_id: 9dbbc0e1534f42cfa099a9790fdc67b8
+    domain: light
+    entity_id: light.tradfri_bulb
+    type: turn_on
+- id: '1579509071490'
+  alias: Turn lights on when motions detected
+  description: ''
   trigger:
   - entity_id: sensor.tradfri_motion_sensor
+    for: 00:00:05
+    from: 'off'
     platform: state
     to: 'on'
+  condition:
+  - condition: state
+    entity_id: light.tradfri_bulb
+    state: 'off'
   action:
-  - service: light.turn_on
-    data:
-      brightness: 255
-      entity_id: light.tradfri_bulb
-      kelvin: 2700
-    entity_id: light.tradfri_bulb
-  - delay: 00:00:10
   - data:
-      brightness: 0
-      entity_id: light.tradfri_bulb
+      brightness: 130
     entity_id: light.tradfri_bulb
-    service: light.turn_off
-- id: '1578642959975'
+    service: light.turn_on
+  - delay: 00:00:30
+  - service: light.turn_off
+    entity_id: light.tradfri_bulb
+- id: '1579509860042'
   alias: Turn on warm light
   description: ''
   trigger:
-  - above: 10
-    below: 25
+  - above: '10'
+    below: '25'
     entity_id: sensor.temp
     for: 00:00:05
     platform: numeric_state
+  condition:
+  - condition: state
+    entity_id: light.tradfri_bulb
+    state: 'on'
   action:
   - data:
-      color_temp: 400
       brightness: 130
-      entity_id: light.tradfri_bulb
+      color_temp: 400
+    entity_id: light.tradfri_bulb
     service: light.turn_on
-- id: '1578642952304'
+- id: '1579509935042'
   alias: Turn on cool light
   description: ''
   trigger:
-  - above: 25
+  - above: '25'
     entity_id: sensor.temp
     for: 00:00:05
     platform: numeric_state
+  condition:
+  - condition: state
+    entity_id: light.tradfri_bulb
+    state: 'on'
   action:
   - data:
-      color_temp: 200
       brightness: 130
-      entity_id: light.tradfri_bulb
+      color_temp: 200
+    entity_id: light.tradfri_bulb
     service: light.turn_on

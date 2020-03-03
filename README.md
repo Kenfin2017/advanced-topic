@@ -1,7 +1,7 @@
 Home Automation Group2
 ======================
 
-1. Introduction
+## 1. Introduction
 ---------------
 
 Home Assistant is an open source home automation program, that claims to
@@ -19,7 +19,7 @@ Hass.io is the operating system for home assistant.
 https://www.home-assistant.io/\
 https://www.home-assistant.io/hassio/
 
-2. Project plan
+## 2. Project plan
 ---------------
 
 Our initial plan was to develop Home Assistant as Docker image on
@@ -33,7 +33,7 @@ Pi has internet connection. After that, we can expand with an Arduino
 UNO to log environment temperature and humidity as additional features
 for light control automation.
 
-3. Lab set up
+## 3. Lab set up
 -------------
 
 ### 3.1. Setup with associated Home Assistant VLAN network:
@@ -79,22 +79,30 @@ install Docker image of HassIO
 #### 3.3.1. Install Docker for Debian Buster (for raspberry pi 4)
 
 \- From Terminal, enter the following command to install docker:\
-`sudo curl -sL get.docker.com | sed 's/9)/10)/' | sh`
+``` bash
+sudo curl -sL get.docker.com | sed 's/9)/10)/' | sh
+```
 
 #### 3.3.2. Install Hassio dependencies
 
-`sudo apt-get install apparmor-utils apt-transport-https avahi-daemon ca-certificates curl dbus jq network-manager socat software-properties-common`
+``` bash
+sudo apt-get install apparmor-utils apt-transport-https avahi-daemon ca-certificates curl dbus jq network-manager socat software-properties-common
+```
 
 #### 3.3.3. Install Hassio
 
 \- Save Hassio installer file:
-`curl -sL "https://raw.githubusercontent.com/home-assistant/hassio-installer/master/hassio_install.sh" >> hassio_install.sh`\
-- Run install script: `sudo bash hassio_install.sh -m raspberrypi4`\
-Click
-[here](https://community.home-assistant.io/t/rpi-4-installation/123514/87)
-for more details
+``` bash
+curl -sL "https://raw.githubusercontent.com/home-assistant/hassio-installer/master/hassio_install.sh" >> hassio_install.sh
+```
 
-4. Automation Configuration
+- Run install script: 
+``` bash
+sudo bash hassio_install.sh -m raspberrypi4
+```
+Click [here](https://community.home-assistant.io/t/rpi-4-installation/123514/87) for more details
+
+## 4. Automation Configuration
 ---------------------------
 
 ### 4.1. Initialize HassIO:
@@ -104,7 +112,7 @@ Raspberry Pi.
 
 \- Enter a username and password for creating first user.\
 (\*Optional: Accept location detection to get local weather data from
-met.no)\
+met.no)
 - HassIO would start to process initialization for around 5 mins. After
 that, this window should appear
 
@@ -117,7 +125,8 @@ Wireshark)
 \- Go to Configuration \> Integrations \> Setup new integration then
 select IKEA Tradfri enter Gateway IP addr (otherwise select the detected
 device if it appear on the window); Use the Security code at the back of
-the Gateway to activate.\
+the Gateway to activate.
+
 - Install mobile app "Home Smart(TRADFRI)" on the smartphone in order to
 establish connection with remote control, IKEA smart light bulb, and
 motion sensor.
@@ -144,18 +153,19 @@ up with manual configuration scripts.
 deployed version of HomeAssistant to the extent that no impact would be
 done to the backend of HassIO, we decided to only add extra integration
 in the configuration.yaml instead of trying to modify the default
-configuration setup `<code>`{=html}default\_config`</code>`{=html}
+configuration setup
 
 \- In order to improve the security within the emblab-homeassistant2
 network, it is recommended to protect the communication between browser
-and frontend with [SSL/TLS Self-signed
-certificate](https://www.home-assistant.io/docs/ecosystem/certificates/tls_self_signed_certificate/)
+and frontend with [SSL/TLS Self-signed certificate](https://www.home-assistant.io/docs/ecosystem/certificates/tls_self_signed_certificate/)
 
 \- Setup DuckDNS account with email and install the server on raspberry
-pi with the following [tutorial](https://www.duckdns.org/install.jsp)
-server.\
+pi with the following [tutorial](https://www.duckdns.org/install.jsp).
+
 - Include automation file with the following script:
-`<code>`{=html}automation: !include automations.yaml`</code>`{=html}
+```yaml
+automation: !include automations.yaml
+```
 
 #### 4.4.2. Environment sensing with Arduino
 
@@ -167,7 +177,7 @@ Humidity sensor HS07.
 \- Example codes for temperature sensing can be found from
 [OneWire](https://www.pjrc.com/teensy/td_libs_OneWire.html) library.
 
-\- Humidity is measured by using the following relation:\
+\- Humidity is measured by using the following relation:
 - Cc = Cs + S \*(Xrh -- 55) with:
 
 -   Cc = measured capacitance(pF)
@@ -175,7 +185,7 @@ Humidity sensor HS07.
 -   Xrh = measured Relative Humidity(%)
 -   S = sensitivity (pF/%RH)
 
-\- *Method to measure capacitance*:\
+\- *Method to measure capacitance*:
 - The capacitor HS07 will charge through a resistor in one time constant
 defined as T seconds where:
 
@@ -191,30 +201,29 @@ the charging voltage.
 \- Communication with Arduino with Serial bus (USB port):\
 - Run the following command to detect the USB port connected with
 Arduino:
-
+```bash
     ls /dev/tty*
+```
 
-\
 - Find the one ends with "USBx" then copy the path for sensor connection
-configuration scripts in
-`<code>`{=html}configuration.yaml`</code>`{=html}:
+configuration scripts in `configuration.yaml`
 
-    <code class="yaml">
-    sensor:
-      - platform: serial
-        serial_port: /dev/ttyUSBx
-        baudrate: 9600
-      - platform: template
-        sensors:
-          temp:
-            friendly_name: Celsius Temperature
-            unit_of_measurement: "°C"
-            value_template: "{{ states('sensor.serial_sensor').split(',')[0] | float}}"
-          humidity:
-            friendly_name: Humidity
-            unit_of_measurement: "%"
-            value_template: "{{ states('sensor.serial_sensor').split(',')[1] | float}}"
-    </code>
+```yaml
+sensor:
+  - platform: serial
+    serial_port: /dev/ttyUSBx
+    baudrate: 9600
+  - platform: template
+    sensors:
+      temp:
+        friendly_name: Celsius Temperature
+        unit_of_measurement: "°C"
+        value_template: "{{ states('sensor.serial_sensor').split(',')[0] | float}}"
+      humidity:
+        friendly_name: Humidity
+        unit_of_measurement: "%"
+        value_template: "{{ states('sensor.serial_sensor').split(',')[1] | float}}"
+```
 
 #### 4.4.3. Automation
 
@@ -233,48 +242,44 @@ Automation Examples: (Can also be done from the WebUI)
 
 \- Turn light bulb on during sunset:
 
-    <code class="yaml">
-      - id: '1572854591783'
-      alias: Turn on light at sun set
-      description: ''
-      trigger:
-      - event: sunset
-        offset: -0:30
-        platform: sun
-      condition: []
-      action:
-      - data:
-          entity_id: all
-        service: light.turn_on
-    </code>
-
-\
+```yaml
+- id: '1572854591783'
+alias: Turn on light at sun set
+description: ''
+trigger:
+- event: sunset
+  offset: -0:30
+  platform: sun
+condition: []
+action:
+- data:
+    entity_id: all
+  service: light.turn_on
+```
 - In yaml code above, the light would be switched when event "sun-set"
 occurs.
 
 \- Change light color on diferent temperature:
 
-    <code class="yaml">
-    - id: '1578642959975'
-      alias: Turn on warm light
-      description: ''
-      trigger:
-      - above: 10
-        below: 25
-        entity_id: sensor.temp
-        for: 00:00:05
-        platform: numeric_state
-      action:
-      - data:
-          color_temp: 400
-          brightness: 130
-          entity_id: light.tradfri_bulb
-        service: light.turn_on
-    </code>
+```yaml
+- id: '1578642959975'
+  alias: Turn on warm light
+  description: ''
+  trigger:
+  - above: 10
+    below: 25
+    entity_id: sensor.temp
+    for: 00:00:05
+    platform: numeric_state
+  action:
+  - data:
+      color_temp: 400
+      brightness: 130
+      entity_id: light.tradfri_bulb
+    service: light.turn_on
+```
 
 \- The automation trigger in this case is "sense.temp" numeric value (in
-centigrade) when it falls below 25.\
-- Color temperature (color\_temp) value corresponds to micro reciprocal
-degree ([mired](https://en.wikipedia.org/wiki/Mired)) scale (according
-to [light](https://www.home-assistant.io/integrations/light)
-configuration page).
+centigrade) when it falls below 25.
+
+\- Color temperature (color\_temp) value corresponds to micro reciprocal degree ([mired](https://en.wikipedia.org/wiki/Mired)) scale (according to [light](https://www.home-assistant.io/integrations/light) configuration page).
